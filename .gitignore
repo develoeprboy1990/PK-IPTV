@@ -1,0 +1,14 @@
+.zip
+.DS_Store
+xtv_client/
+.env
+application/libraries/dompdf_olddd
+taskFiles/
+PHPMailer/
+logs/
+README.md
+vendor 
+application/logs/
+application/cache/*
+ci_session/*
+composer.lock

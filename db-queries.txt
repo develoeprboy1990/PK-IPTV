@@ -1,0 +1,77 @@
+*******24-oct-2-24 Used for Classic IMS VOD ---SYSTEM*****
+
+
+CREATE TABLE `publish_vod_classic_ims` (
+  `id` int NOT NULL,
+  `module_name` varchar(255) NOT NULL,
+  `should_update` enum('yes','no') NOT NULL DEFAULT 'yes',
+  `last_update` datetime NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+INSERT INTO `publish_vod_classic_ims` (`id`, `module_name`, `should_update`, `last_update`) VALUES
+(1, '1. Only New VOD UPdate(Use Only for New VOD)', 'yes', '2024-10-24 09:37:10'),
+(2, '2. All VOD Update (Use for Update and New VOD)', 'yes', '2024-10-24 09:31:50'),
+(3, '3. Stores and Categories (Use when new Store or Categories)', 'yes', '2024-10-24 09:37:26');
+
+
+
+ALTER TABLE `publish_vod_classic_ims`
+  ADD PRIMARY KEY (`id`);
+
+
+ALTER TABLE `publish_vod_classic_ims`
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+
+
+**************28-oct-2024 New Category in Series on Demand-> IMS System****************
+--
+-- Table structure for table `tv_show_platforms`
+--
+
+DROP TABLE IF EXISTS `tv_show_platforms`;
+CREATE TABLE IF NOT EXISTS `tv_show_platforms` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+
+INSERT INTO `tv_show_platforms` (`id`, `name`) VALUES
+(1, 'StarPlus'),
+(2, 'Zee TV');
+
+
+CREATE TABLE `series_to_tv_platforms` (
+  `id` int(11) NOT NULL AUTO_INCREMENT, 
+  `series_id` int(11) NOT NULL,
+  `platform_id` int(11) NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `series_id` (`series_id`),
+  KEY `platform_id` (`platform_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+ALTER TABLE `series` ADD COLUMN `tv_show_platforms` varchar(255) DEFAULT NULL AFTER `ott_platforms`;
+
+
+**************29-oct-2024 TV Show Status in Series on Demand-> IMS System****************
+ALTER TABLE `series` ADD `tv_show_platform_status` TINYINT(1) NOT NULL DEFAULT '0' AFTER `ott_platforms`; 
+
+
+**************30-Oct-2024 Add laguage_id in Tv Show Platform******************
+ALTER TABLE `tv_show_platforms` ADD `language_id` INT NOT NULL DEFAULT '0' AFTER `id`;
+
+
+
+**************01-Nov-2024 TV Show Status in Series on Demand-> IMS System****************
+ALTER TABLE app_publish ADD COLUMN remarks TEXT NULL AFTER update_without_login;
+
+
+************06-Nov-2024 Migration History in Db Auto Query******************
+CREATE TABLE `migration_history` (
+    `id` INT(11) UNSIGNED NOT NULL AUTO_INCREMENT,
+    `version` INT(11) NOT NULL,
+    `filename` VARCHAR(255) NOT NULL,
+    `applied_at` DATETIME NOT NULL,
+    `action` ENUM('migrate', 'revert') NOT NULL DEFAULT 'migrate',
+    PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
