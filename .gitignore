@@ -7,7 +7,6 @@ taskFiles/
 PHPMailer/
 logs/
 README.md
-vendor 
 application/logs/
 application/cache/*
 ci_session/*
