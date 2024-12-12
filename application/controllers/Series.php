@@ -442,7 +442,8 @@ class Series extends User_Controller {
 				echo json_encode(array("resultist" => "one", "resdata" => $response));
 				
 				//$response['selected_store'] = $sessionid;
-			} else {
+			} 
+            else {
 					$this->load->model('tmdb_model');	
 					if($dbselect == 'tmdb'){				
 						$data = $this->tmdb_model->get_tvseriesinfo($id);

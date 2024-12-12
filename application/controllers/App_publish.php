@@ -112,7 +112,6 @@ class App_publish extends User_Controller {
                 'update_without_login' => $this->input->post('update_without_login'),
                 'type' => $this->input->post('type'),
                 'beta_type' => $this->input->post('beta_type'),
-                'remarks' => $this->input->post('remarks'),
                 'created_at' => date('Y-m-d H:i:s')
             );
             
@@ -183,8 +182,7 @@ class App_publish extends User_Controller {
                 'url' => $this->input->post('url'),
                 'forceupdate' => $this->input->post('forceupdate'),
                 'update_without_login' => $this->input->post('update_without_login'),
-                'beta_type' => $this->input->post('beta_type'),
-                'remarks' => $this->input->post('remarks')
+                'beta_type' => $this->input->post('beta_type')
             );
 
             $result = $this->App_publish_m->update_app_publish($log_data,array('id' => $id), 'app_publish');
@@ -283,8 +281,7 @@ class App_publish extends User_Controller {
             'url' => $activeRecord->url,
             'forceupdate' => $activeRecord->forceupdate == '1' ? True : False,
             'update_without_login' => $activeRecord->update_without_login == '1' ? True : False,
-            'beta_type' => $activeRecord->beta_type,
-            'remarks' => $activeRecord->remarks
+            'beta_type' => $activeRecord->beta_type
         );
 
         if($type == 'General') {

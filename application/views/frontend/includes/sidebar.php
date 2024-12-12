@@ -408,6 +408,8 @@
             <ul class="treeview-menu">
               <?php if(!empty($this->ion_auth->checkPermission(7))){?>
                 <li <?=isset($sub_nav) && ($sub_nav=='analytics') ? 'class="active"' : ''?>><a href="<?= BASE_URL ?>reports/analytics"><i class="fa fa-group"></i> Analytics </a></li>
+
+                <li <?=isset($sub_nav) && ($sub_nav=='users_report') ? 'class="active"' : ''?>><a href="<?= BASE_URL ?>reports/users_report"><i class="fa fa-group"></i> Users Report </a></li>
               <?php }?>
             </ul>
           </li>

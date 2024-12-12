@@ -105,16 +105,6 @@
 
         <div class="row"> 
           <div class="form-group">
-              <label for="remarks" class="col-sm-2 control-label">Remarks</label>
-              <div class="col-sm-4">
-                  <textarea id="remarks" name="remarks" class="form-control" placeholder="Enter remarks..."></textarea>
-                  <span class="text-danger"><?= form_error('remarks'); ?></span>
-              </div>
-          </div>
-        </div>
-
-        <div class="row"> 
-          <div class="form-group">
             <label class="col-sm-2 control-label"></label>
             <div class="col-sm-4">
               <button type="submit" class="btn btn-success">Create SetUp App</button>

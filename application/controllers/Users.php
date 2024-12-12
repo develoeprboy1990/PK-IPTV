@@ -467,7 +467,8 @@ class Users extends User_Controller {
 	}
 
 
-	public function email_check_other_than($email){
+	public function email_check_other_than($email)
+	{
 	 	$this->load->model('user_m');
         $result=$this->user_m->check_other_emails($email,$this->input->post('id'));
         foreach ($result as $eml) {
@@ -501,6 +502,4 @@ class Users extends User_Controller {
 			return FALSE;
 		}
 	}
-
-
 }

@@ -400,5 +400,37 @@ class Daily_episode_update extends User_Controller {
 			echo '</optgroup>';
 		}
 	}
+
+	public function delete_multiple() {
+	    if (!empty($_POST['selected_episodes'])) {
+	        $selected_episodes = $_POST['selected_episodes'];
+	        $success_count = 0;
+	        $fail_count = 0;
+	        
+	        foreach ($selected_episodes as $episode_id) {
+	            if ($this->series_m->deleted_daily_episode_seasion($episode_id)) {
+	                $success_count++;
+	                $this->userlogs->track_this(
+	                    $this->session->user_id,
+	                    '<a href="'.site_url('daily_episode_update').'" target="_blank">Delete Episode ID: '.$episode_id.'</a>'
+	                );
+	            } else {
+	                $fail_count++;
+	            }
+	        }
+	        
+	        if ($success_count > 0) {
+	            $this->session->set_flashdata('success', "Successfully deleted $success_count episodes.");
+	        }
+	        if ($fail_count > 0) {
+	            $this->session->set_flashdata('failure', "Failed to delete $fail_count episodes.");
+	        }
+	    } else {
+	        $this->session->set_flashdata('failure', "No episodes selected for deletion.");
+	    }
+	    
+	    redirect(BASE_URL . 'daily_episode_update');
+	}
+
 	
 }

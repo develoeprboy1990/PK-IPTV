@@ -12,8 +12,6 @@ $(document).ready(function(){
       });
 	// Replace the existing DataTable initialization in _extra_scripts.php
 
-
-
     // Initialize DataTable
     var moviesTable = $('#movies').DataTable({
         'processing': true,
@@ -678,10 +676,11 @@ $(document).ready(function(){
 	});
 
 	//.play-movie
-	$('.play-movie').on('click', function(e) {
+	$(document).on('click', '.play-movie', function(e) {
 	    e.preventDefault();
 	    var movieId = $(this).data('movie-id');
-	    playMovie(movieId);
+	    playMovieInNewTab(movieId);
+	    //playMovie(movieId);
 	});
 
 	
@@ -737,7 +736,7 @@ $(document).ready(function(){
 //End of $(document).ready
 
 	//Verify URL
-	function verifyUrl(urlType, urlId) {
+	function verifyUrlXXX(urlType, urlId) {
 	    return new Promise(function(resolve, reject) {
 	        var serverUrlId = $('#server_url_' + urlId.split('_').pop()).val();
 	        var url = $('#' + urlId).val();
@@ -788,21 +787,134 @@ $(document).ready(function(){
 	        });
 	    });
 	}
-	function showMessage($element, type, message) {
+	function showMessageXXX($element, type, message) {
 	    $element.removeClass('text-success text-danger').addClass(type === 'success' ? 'text-success' : 'text-danger').text(message);
 	}
+
+	function showMessage($element, type, message, details = null) {
+	    let messageText = message;
+	    if (details) {
+	        messageText += '<br><small>Format: ' + details.format + 
+	                      ' | Size: ' + details.size + 
+	                      ' | Type: ' + details.type + '</small>';
+	    }
+	    $element.removeClass('text-success text-danger')
+	            .addClass(type === 'success' ? 'text-success' : 'text-danger')
+	            .html(messageText);
+	}
+	function verifyUrl(urlType, urlId) {
+	    return new Promise(function(resolve, reject) {
+	        var serverUrlId = $('#server_url_' + urlId.split('_').pop()).val();
+	        var url = $('#' + urlId).val();
+	        
+	        var $verifyButton = $('[data-url-id="' + urlId + '"].verify-url');    
+	        var $messageDiv = $verifyButton.closest('.col-sm-7').find('.url-message');
+
+	        if (!url) {
+	            showMessage($messageDiv, 'error', 'Please enter a URL before verifying.');
+	            resolve({status: 'error', message: 'No URL provided'});
+	            return;
+	        }
+
+	        $verifyButton.prop('disabled', true).text('Verifying...');
+
+	        $.ajax({
+	            url: '<?php echo base_url("movies/verify_url"); ?>',
+	            method: 'POST',
+	            data: {
+	                url_type: urlType,
+	                server_url_id: serverUrlId,
+	                url: url
+	            },
+	            dataType: 'json',
+	            success: function(response) {
+	                if (response.status === 'success') {
+	                    showMessage($messageDiv, 'success', response.message, response.video_details);
+	                    $verifyButton.removeClass('btn-info btn-danger')
+	                               .addClass('btn-success')
+	                               .text('Verified');
+	                    resolve({
+	                        status: 'success',
+	                        message: response.message,
+	                        url_with_token: response.url_with_token
+	                    });
+	                } else {
+	                    showMessage($messageDiv, 'error', response.message);
+	                    $verifyButton.removeClass('btn-info btn-success')
+	                               .addClass('btn-danger')
+	                               .text('Verify Failed');
+	                    resolve({status: 'error', message: response.message});
+	                }
+	            },
+	            error: function() {
+	                showMessage($messageDiv, 'error', 'An error occurred during verification');
+	                $verifyButton.removeClass('btn-info btn-success')
+	                           .addClass('btn-danger')
+	                           .text('Verify Failed');
+	                resolve({status: 'error', message: 'Verification failed'});
+	            },
+	            complete: function() {
+	                $verifyButton.prop('disabled', false);
+	            }
+	        });
+	    });
+	}
+
+
 	function showVideoPlayer(url) {
-        var videoPlayer = document.getElementById('videoPlayer');
+		//open in new tab
+        window.open(url, '_blank', 'noopener,noreferrer');
+        /*var videoPlayer = document.getElementById('videoPlayer');
         videoPlayer.src = url;
         $('#videoPlayerModal').modal('show');
         videoPlayer.play();
 
         $('#videoPlayerModal').on('hidden.bs.modal', function () {
             videoPlayer.pause();
-        });
+        });*/
     }
 
 	//.play-movie
+	function playMovieInNewTab(movieId) {
+	    $.ajax({
+	        url: '<?php echo base_url("movies/get_movie_urls"); ?>',
+	        method: 'POST',
+	        data: { movie_id: movieId },
+	        dataType: 'json',
+	        success: function(response) {
+	            if (response.status === 'success' && response.movie_urls && response.movie_urls.length > 0) {
+	                verifyAndOpenUrl(response.movie_urls[0].url);
+	            } else {
+	                alert('Error getting movie URL: ' + response.message);
+	            }
+	        },
+	        error: function() {
+	            alert('An error occurred while getting the movie URL.');
+	        }
+	    });
+	}
+
+	function verifyAndOpenUrl(movieUrl) {
+	    $.ajax({
+	        url: '<?php echo base_url("movies/verify_url"); ?>',
+	        method: 'POST',
+	        data: {
+	            url_type: 'movie',
+	            url: movieUrl
+	        },
+	        dataType: 'json',
+	        success: function(response) {
+	            if (response.status === 'success') {
+	                window.open(response.url_with_token, '_blank', 'noopener,noreferrer');
+	            } else {
+	                alert('Error verifying movie URL.');
+	            }
+	        },
+	        error: function() {
+	            alert('An error occurred during URL verification.');
+	        }
+	    });
+	}
 	function playMovie(movieId) {
 	  $.ajax({
 	    url: '<?php echo base_url("movies/get_movie_urls"); ?>',
@@ -884,6 +996,7 @@ $(document).ready(function(){
 	    videoPlayer.pause();
 	  });
 	}
+
 	function list_image_select(id){
 		var img_select = $('#list_img_'+id).attr('alt');
 		var selected_image = $('#poster_image').attr('src');

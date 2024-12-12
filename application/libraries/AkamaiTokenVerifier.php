@@ -5,26 +5,14 @@ class AkamaiTokenVerifier {
     private $Akamai_token_key;
 
     public function __construct() {
-        // Load the CI instance
-        //$CI =& get_instance();
-        
-        // Load the settings model if not already loaded
-        //$CI->load->model('settings_m');
-        
-        // Get the Akamai Token Secret from the database
-        //$this->Akamai_token_key = $CI->settings_m->get_by(array('key' => 'Akamai_Token_Secret'))->value;
-        
-        // If the key is not set in the database, use a default value (not recommended for production)
-        //if (!$this->Akamai_token_key) {
-            $this->Akamai_token_key = AKAMAI_VERIFICATION_KEY; // Default value, replace with your actual key
-        //}
+        $this->Akamai_token_key = AKAMAI_VERIFICATION_KEY;
     }
 
     public function verifyUrl($url) {
-
+        
         // Check if URL is empty
         if (empty($url)) {
-            return array('status' => 'error', 'message' => 'URL cannot be empty');
+             return array('status' => 'error', 'message' => 'URL cannot be empty');
         }
 
         // Generate a token
@@ -33,34 +21,134 @@ class AkamaiTokenVerifier {
         // Append the token to the URL
         $url_with_token = $url . (parse_url($url, PHP_URL_QUERY) ? '&' : '?') . 'hdnts=' . $token;
 
-        // Initialize cURL
-        $ch = curl_init($url_with_token);
+        // First verify the URL is accessible
+        $urlCheck = $this->checkUrlAccess($url_with_token);
+        if ($urlCheck['status'] === 'error') {
+            return $urlCheck;
+        }
 
-        // Set cURL options
+        // Then verify the video content
+        $videoCheck = $this->verifyVideoContent($url_with_token);
+        if ($videoCheck['status'] === 'error') {
+            return $videoCheck;
+        }
+
+        return array(
+            'status' => 'success', 
+            'message' => 'URL and video content verified successfully',
+            'url_with_token' => $url_with_token,
+            'video_info' => $videoCheck['video_info']
+        );
+    }
+
+    private function checkUrlAccess($url) {
+        $ch = curl_init($url);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($ch, CURLOPT_NOBODY, true);
         curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
-        curl_setopt($ch, CURLOPT_TIMEOUT, 10); // Set a timeout of 10 seconds
+        curl_setopt($ch, CURLOPT_TIMEOUT, 10);
+        curl_setopt($ch, CURLOPT_HEADER, true);
 
-        // Execute the request
         $result = curl_exec($ch);
-
-        // Check for errors and get the HTTP status code
         $error = curl_error($ch);
         $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-
-        // Close the cURL handle
         curl_close($ch);
 
         if ($result === false) {
             return array('status' => 'error', 'message' => 'Failed to connect: ' . $error);
         } elseif ($httpCode >= 200 && $httpCode < 300) {
-            return array('status' => 'success', 'message' => 'URL verified successfully', 'url_with_token' => $url_with_token);
+            return array('status' => 'success');
         } else {
             return array('status' => 'error', 'message' => 'Invalid URL. HTTP status code: ' . $httpCode);
         }
     }
 
+    private function verifyVideoContent($url) {
+        $ch = curl_init($url);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
+        curl_setopt($ch, CURLOPT_TIMEOUT, 15);
+        curl_setopt($ch, CURLOPT_RANGE, '0-2000000'); // Get first 2MB to check headers
+        curl_setopt($ch, CURLOPT_HEADERFUNCTION, function($curl, $header) use (&$headers) {
+            $len = strlen($header);
+            $header = explode(':', $header, 2);
+            if (count($header) < 2) // ignore invalid headers
+                return $len;
+
+            $headers[strtolower(trim($header[0]))][] = trim($header[1]);
+            return $len;
+        });
+
+        $data = curl_exec($ch);
+        $contentType = curl_getinfo($ch, CURLINFO_CONTENT_TYPE);
+        $fileSize = curl_getinfo($ch, CURLINFO_CONTENT_LENGTH_DOWNLOAD);
+        $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        curl_close($ch);
+
+        // Check content type
+        if (!preg_match('/video|application\/x-mpegURL|application\/vnd\.apple\.mpegURL/i', $contentType)) {
+            return array(
+                'status' => 'error', 
+                'message' => 'Invalid content type. Expected video content, got: ' . $contentType
+            );
+        }
+
+        // Check file size
+        if ($fileSize !== -1 && $fileSize < 1024) { // If size is known and less than 1KB
+            return array(
+                'status' => 'error',
+                'message' => 'Video file appears to be empty or too small'
+            );
+        }
+
+        // Basic video format validation
+        $isValid = false;
+        $videoInfo = array(
+            'content_type' => $contentType,
+            'file_size' => $fileSize,
+            'format' => 'unknown'
+        );
+
+        // Check for common video signatures
+        $signatures = array(
+            'mp4' => array('66747970', '667479706D703432'), // MP4 signatures
+            'ts' => array('47400010'), // MPEG-TS signature
+            'm3u8' => array('2345585453', '234558545350') // HLS playlist signatures
+        );
+
+        $hexData = bin2hex(substr($data, 0, 1000));
+        foreach ($signatures as $format => $sigs) {
+            foreach ($sigs as $sig) {
+                if (stripos($hexData, $sig) !== false) {
+                    $isValid = true;
+                    $videoInfo['format'] = $format;
+                    break 2;
+                }
+            }
+        }
+
+        // For M3U8 playlists, check content
+        if (preg_match('/application\/x-mpegURL|application\/vnd\.apple\.mpegURL/i', $contentType)) {
+            if (preg_match('/#EXTM3U/i', $data)) {
+                $isValid = true;
+                $videoInfo['format'] = 'm3u8';
+            }
+        }
+
+        if (!$isValid) {
+            return array(
+                'status' => 'error',
+                'message' => 'Could not verify video content format'
+            );
+        }
+
+        return array(
+            'status' => 'success',
+            'video_info' => $videoInfo
+        );
+    }
+
+    // Existing token generation methods remain the same
     private function generateToken($expire) {
         $m_token = 'st=' . time() . '~';
         $m_token .= 'exp=' . $expire . '~';

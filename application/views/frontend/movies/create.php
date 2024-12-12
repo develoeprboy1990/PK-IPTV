@@ -1,4 +1,4 @@
-<!-- Content Wrapper. Contains page content -->
+  <!-- Content Wrapper. Contains page content -->
 <div class="content-wrapper">
   <!-- Content Header (Page header) -->
   <section class="content-header">
@@ -437,7 +437,7 @@
                 <div class="form-group">
                   <label for="rating" class="col-sm-2 control-label">Content Rating</label>
                   <div class="col-sm-2">
-  			             <input type="text" id="age_rating" name="age_rating" class="form-control" />                    
+  			             <input type="text" id="age_rating" name="age_rating" class="form-control" required />                    
                   </div>
                 </div>
               </div>

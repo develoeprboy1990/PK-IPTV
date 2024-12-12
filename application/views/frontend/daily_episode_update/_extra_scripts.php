@@ -170,8 +170,56 @@ $("#data_log").on('click', function() {
     $('#btn_move_down_countries').click(function(){
         moveDown('#multiselect_right_countries');
     });
-	
-	
+
+    $("#select_all").change(function(){
+        $(".episode_checkbox").prop('checked', $(this).prop("checked"));
+    });
+
+     $(".episode_checkbox").change(function(){
+        if (!$(this).prop("checked")){
+            $("#select_all").prop("checked", false);
+        }
+    });
+
+    $("#delete_selected_btn").click(function(e){
+      e.preventDefault();
+      
+      var selected = [];
+      $('.episode_checkbox:checked').each(function(){
+          selected.push($(this).val());
+      });
+      
+      if(selected.length === 0){
+          alert('Please select at least one episode to delete.');
+          return;
+      }
+      
+      if(confirm('Are you sure you want to delete ' + selected.length + ' selected episodes?')){
+          var form = $('<form></form>')
+              .attr('method', 'post')
+              .attr('action', '<?php echo base_url(); ?>daily_episode_update/delete_multiple');
+
+              
+          // Add CSRF token if your system uses it
+          <?php if(isset($this->security) && $this->security->get_csrf_token_name()): ?>
+          form.append($('<input>')
+              .attr('type', 'hidden')
+              .attr('name', '<?= $this->security->get_csrf_token_name() ?>')
+              .attr('value', '<?= $this->security->get_csrf_hash() ?>'));
+          <?php endif; ?>
+          
+          // Add selected episodes
+          selected.forEach(function(id){
+              form.append($('<input>')
+                  .attr('type', 'hidden')
+                  .attr('name', 'selected_episodes[]')
+                  .attr('value', id));
+          });
+          
+          $('body').append(form);
+          form.submit();
+      }
+    });
 });
 
 function show_logdata(){

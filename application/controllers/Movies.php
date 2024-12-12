@@ -1681,7 +1681,7 @@ class Movies extends User_Controller {
         $path=LOCAL_PATH_IMAGES_CMS;
         $this->download_and_save_image($url,$path);
     }
-	public function verify_url() {
+	public function verify_urlXXXX() {
 
         $url_type = $this->input->post('url_type');
         $server_url_id = $this->input->post('server_url_id');
@@ -1709,6 +1709,53 @@ class Movies extends User_Controller {
         
         echo json_encode($result);
     }
+
+	public function verify_url() {
+		$url_type = $this->input->post('url_type');
+		$server_url_id = $this->input->post('server_url_id');
+		$stream_name = trim($this->input->post('url'));
+
+		// Check if URL is empty
+		if (empty($stream_name)) {
+		    echo json_encode(array('status' => 'error', 'message' => 'URL cannot be empty'));
+		    return;
+		}
+
+		if (!empty($server_url_id)) {
+		    $cname_initial = $this->channels_m->get_server_url_by_id($server_url_id);
+		    $url = rtrim($cname_initial, '/') . '/' . ltrim($stream_name, '/');        
+		} else {
+		    $url = $stream_name;
+		}
+
+		// Load the AkamaiTokenVerifier library
+        $this->load->library('AkamaiTokenVerifier');
+        
+        // Verify the URL and get the URL with token
+		$result = $this->akamaitokenverifier->verifyUrl($url);
+
+		// Add video info to the response if available
+		if ($result['status'] === 'success' && isset($result['video_info'])) {
+		    $result['video_details'] = array(
+		        'format' => $result['video_info']['format'],
+		        'size' => $this->formatBytes($result['video_info']['file_size']),
+		        'type' => $result['video_info']['content_type']
+		    );
+		}
+
+		echo json_encode($result);
+	}
+
+	private function formatBytes($bytes, $precision = 2) {
+	    $units = array('B', 'KB', 'MB', 'GB', 'TB');
+
+	    $bytes = max($bytes, 0);
+	    $pow = floor(($bytes ? log($bytes) : 0) / log(1024));
+	    $pow = min($pow, count($units) - 1);
+
+	    return round($bytes / pow(1024, $pow), $precision) . ' ' . $units[$pow];
+	}
+
     public function get_server_url() {
 	    $server_url_id = $this->input->post('server_url_id');
 	    $server_url = $this->movies_m->get_server_url($server_url_id);

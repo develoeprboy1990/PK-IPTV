@@ -114,6 +114,9 @@
 		</div>
 		<span  id="data_log_span_search" style="float: right;margin-top: -38px;padding: 5px 10px;margin-right: 90px; display:none;">Select Date : <input type="date" name="select_log_data" id="select_log_data" onchange="show_logdata();"/></span>
 		<span id="data_add_all" style="float: right;margin-top: -38px;padding: 5px 10px;border: 1px solid #008d4c;font-weight: bold; cursor:pointer; color:#00a65a;margin-right: 100px;"><a href="<?php echo BASE_URL; ?>daily_episode_update/addalldata" style="color:#00a65a;" onclick="return confirm('Are you sure? To add All.');">Add All Data</a></span>
+			<span id="delete_selected" style="float: right;margin-top: -38px;padding: 5px 10px;border: 1px solid #dc3545;font-weight: bold; cursor:pointer; color:#dc3545;margin-right: 220px;">
+	    	<a href="#" id="delete_selected_btn" style="color:#dc3545;">Delete Selected</a>
+			</span>
 	</div>
 	<!--<div class="box-header">
 	  <span class="pull-right"><span class="export-icon">Export to: </span>
@@ -126,6 +129,7 @@
 										<table id="apps" class="table table-bordered table-striped">
 										  <thead>
 											<tr>
+											<th><input type="checkbox" id="select_all" /></th>
 											<th>Season Date</th>
 											<th>Title</th>
 											  
@@ -147,6 +151,7 @@
 												if($key['is_added'] == '0'){
 											?>
 											 <tr>
+											 	 <td><input type="checkbox" class="episode_checkbox" value="<?php echo $key['id']; ?>" /></td>
 											 	<td><?php echo date ('d-m-Y', strtotime($key['episode_date'])); ?></td>
 												<td><?php echo $key['title']; ?></td>
 												

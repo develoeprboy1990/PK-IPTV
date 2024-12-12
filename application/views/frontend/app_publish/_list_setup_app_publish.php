@@ -33,7 +33,6 @@
               <th>Date</th>
               <th>Status</th>
               <th>Force Update</th>
-              <th>Remarks</th>
               <th>Action</th>
             </tr> 
           </thead>          
@@ -54,7 +53,6 @@
                   </label>
                 </td>
                 <td><?php echo $key['forceupdate'] == '1' ? 'True' : 'False'; ?></td>
-                <td><?php echo $key['remarks']; ?></td>
                 <td>
                   <button class="btn btn-info btn-sm view-details" data-id="<?php echo $key['id']; ?>">
                     <i class="fa fa-eye"></i> View

@@ -184,14 +184,16 @@
 
 
 	function playVideo(url) {
-	    var videoPlayer = document.getElementById('videoPlayer');
+		//open in new tab
+		window.open(url, '_blank', 'noopener,noreferrer');
+	    /*var videoPlayer = document.getElementById('videoPlayer');
 	    videoPlayer.src = url;
 	    $('#videoPlayerModal').modal('show');
 	    videoPlayer.play();
 
 	    $('#videoPlayerModal').on('hidden.bs.modal', function () {
             videoPlayer.pause();
-        });
+        });*/
 	}
 
 

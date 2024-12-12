@@ -541,6 +541,12 @@ public function get_all_series_growth_data() {
     return $query->result_array();
 }
 
+public function delete_multiple_episodes($episode_ids) {
+    $this->db->where_in('id', $episode_ids);
+    $this->db->delete('daily_episode_update');
+    return $this->db->affected_rows();
+}	
+
 }
 
 /* End of file Movies_m.php */

@@ -406,6 +406,7 @@
                                     <span class="input-group-btn">
                                       <button type="button" class="btn btn-info verify-url" data-url-type="movie" data-url-id="stream_name_<?=$i?>">Verify</button>
                                       <button type="button" class="btn btn-primary play-url" data-url-id="stream_name_1">Play</button>
+
                                     </span>
                                   </div>
                                   <div class="url-message"></div>
@@ -591,7 +592,7 @@
               <div class="form-group">
                 <label for="rating" class="col-sm-2 control-label">Content Rating</label>
                 <div class="col-sm-1">
-			  <input type="text" id="age_rating" name="age_rating" value="<?php echo $details->age_rating;?>" />                    
+			  <input type="text" id="age_rating" name="age_rating" value="<?php echo $details->age_rating;?>" required />                    
                 </div>
               </div>
             </div>
