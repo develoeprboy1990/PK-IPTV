@@ -385,12 +385,12 @@ class Customer extends MY_Controller
 	public function profile(){		
 		$user_id=$this->session->user_id;
 
-		
+
 		if (!$this->ion_customer_auth->logged_in()){
 			redirect('customer/login', 'refresh');
 		}
 
-
+		
 		$this->load->model('dynamic_dependent_m');
 		// get user info
         $info = $this->customers_m->getCustomerInfo($user_id);
@@ -5468,6 +5468,77 @@ class Customer extends MY_Controller
 		 
 		
     }
+/* Login as a customer via a tokenized link - methods Code starts here 18 dec 2024*/
+	public function auto_login()
+	{
+		$token = $this->input->get('token');
 
+		// Validate token
+		$query = $this->db->get_where('customer_login_tokens', ['token' => $token]);
+		if ($query->num_rows() === 1) {
+			$token_data = $query->row();
+			// Check if token is expired
+			if ($token_data->expires_at < time()) {
+				echo 'This link has expired.';
+				return;
+			}
+
+			// Check if a session already exists
+			if ($this->session->userdata('user_id')) {
+				echo '<script>
+					if (confirm("A session is already active. Do you want to log out and log in as this customer?")) {
+						window.location.href = "' . base_url("customer/force_auto_login?token=$token") . '";
+					}
+				</script>';
+				return;
+			}
+
+			// Log in the customer
+			$this->_login_customer($token_data->customer_id);
+		} else {
+			echo 'Invalid login link.';
+		}
+	}
+
+	public function force_auto_login()
+	{
+		$token = $this->input->get('token');
+
+		$query = $this->db->get_where('customer_login_tokens', ['token' => $token]);
+
+		if ($query->num_rows() === 1) {
+			$token_data = $query->row();
+			$this->_login_customer($token_data->customer_id);
+		} else {
+			echo 'Invalid login link.';
+		}
+	}
+
+	private function _login_customer($customer_id)
+	{
+		// Fetch customer data
+		$this->load->model('customers_m');
+		$customer = $this->customers_m->getCustomerInfo($customer_id);
+		// print_r($customer);exit;
+		if ($customer) {
+			// Set customer session
+			$customer_session = [
+				'user_id'    => $customer->id,
+				'first_name' => $customer->first_name,
+				'last_name'  => $customer->last_name,
+				'role'       => 'customers',
+				'identity'      => $customer->email,
+				'logged_in'  => true // Mark the user as logged in
+			];
+			// print_r($customer_session);exit;
+			$this->session->set_userdata($customer_session);
+
+			redirect('customer/profile');
+		} else {
+			$this->session->set_flashdata('error', 'Customer not found.');
+			redirect('/customers');
+		}
+	}
+	/* Login as a customer via a tokenized link - methods Code end here 18 dec 2024*/
     
 }

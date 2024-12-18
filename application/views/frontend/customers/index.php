@@ -149,10 +149,13 @@ if(!isset($is_allow))
                                       </label>
                                       </td>
                                       <td><?php echo ($customer['reseller_name'] != '') ? $customer['reseller_name'] : 'Admin';?></td>
-                                      <td>
+                                      <td width="120">
                                         <ul class="custom-list">
                                           <li><button title="Edit"><?php echo btn_edit(BASE_URL.'customers/details/'.$customer['id']);?></button></li>
                                           <li><button title="Delete"><?php echo btn_delete(BASE_URL.'customers/delete/'.$customer['id'])?></button></li>
+                                          <li>
+                                            <button title="Login as customer  link" onclick="getLoginLink(<?php echo $customer['id']; ?>)"><i class="fa fa-link"></i></button>
+                                          </li>
                                         </ul>
                                       </td>
                                     </tr>
@@ -232,10 +235,13 @@ if(!isset($is_allow))
                     </td>
                     <td><?php echo ($customer['reseller_name'] != '') ? $customer['reseller_name'] : 'Admin';?></td>
                     <td><?php echo $customer['account_id']; ?></td>
-                    <td>
+                    <td width="120">
                     <ul class="custom-list">
                       <li><button title="Edit"><?php echo btn_edit(BASE_URL.'customers/details/'.$customer['id']);?></button></li>
                       <li><button title="Delete"><?php echo btn_delete(BASE_URL.'customers/delete/'.$customer['id'])?></button></li>
+                      <li>
+                        <button title="Login as customer  link" onclick="getLoginLink(<?php echo $customer['id']; ?>)"><i class="fa fa-link"></i></button>
+                      </li>
                     </ul>
                     </td>
                     </tr>
@@ -313,13 +319,15 @@ if(!isset($is_allow))
                                   </td>
                                   <td><?php echo ($customer['reseller_name'] != '') ? $customer['reseller_name'] : 'Admin';?></td>
                                   <td><?php echo $customer['account_id']; ?></td>
-                                  <td>
+                                  <td width="120">
                                     <ul class="custom-list">
                                       <li><button title="Edit"><?php echo btn_edit(BASE_URL.'customers/details/'.$customer['id']);?></button></li>
                                       <li><button title="Delete"><?php echo btn_delete(BASE_URL.'customers/delete/'.$customer['id'])?></button></li>
                                       <li><button title="Resend Verification" class="btn btn-info btn-xs resend-verification" data-id="<?=$customer['id']?>">Resend</button></li>
                                       <li><button title="Manually Verify" class="btn btn-success btn-xs manual-verify" data-id="<?=$customer['id']?>">Verify</button></li>
-
+                                      <li>
+                                        <button title="Login as customer  link" onclick="getLoginLink(<?php echo $customer['id']; ?>)"><i class="fa fa-link"></i></button>
+                                      </li>
 
                                     </ul>
                                   </td>
@@ -396,10 +404,13 @@ if(!isset($is_allow))
                                   </label>
                                   </td>
                                   <td><?php echo ($customer['reseller_name'] != '') ? $customer['reseller_name'] : 'Admin';?></td>
-                                  <td>
+                                  <td width="120">
                                     <ul class="custom-list">
                                       <li><button title="Edit"><?php echo btn_edit(BASE_URL.'customers/details/'.$customer['id']);?></button></li>
                                       <li><button title="Delete"><?php echo btn_delete(BASE_URL.'customers/delete/'.$customer['id'])?></button></li>
+                                      <li>
+                                        <button title="Login as customer  link" onclick="getLoginLink(<?php echo $customer['id']; ?>)"><i class="fa fa-link"></i></button>
+                                      </li>
                                     </ul>
                                   </td>
                                 </tr>
@@ -792,6 +803,103 @@ if(!isset($is_allow))
     </div> -->
   </section>
 </div>
+<!-- Login as a customer via a tokenized link - the generated link modal, script and style Code starts here 18 dec 2024 -->
+<!-- Popup Modal -->
+<div id="loginLinkModal" class="modal">
+    <div class="modal-content">
+        <p>Copy the link below to log in as the customer:</p>
+        <input type="text" id="loginLink" readonly>
+        <span style="color:green; display:none;" class="copiedStr">copied!</span>
+        <p class="text-warning">Note: The link will expire in 10 minutes. Please ensure you use it within this timeframe.</p>
+        <button onclick="copyToClipboard()" class="btn btn-primary">Copy</button>
+        <button onclick="closeModal()" class="btn btn-danger">Close</button>
+    </div>
+</div>
+<script>
+    function getLoginLink(customerId) {
+        fetch('<?php echo base_url("login/generate_customer_login_link/"); ?>' + customerId)
+            .then(response => response.json())
+            .then(data => {
+                if (data.link) {
+                  // alert(data.link);
+                    document.getElementById('loginLink').value = data.link;
+                    document.getElementById('loginLinkModal').style.display = 'block';
+                    let copiedStr = document.getElementsByClassName('copiedStr');
+                    if (copiedStr.length > 0) {
+                      copiedStr[0].style.display = 'none';
+                    }
+                } else {
+                    alert(data.error || 'Unable to generate login link');
+                }
+            });
+    }
+
+    function copyToClipboard() {
+        const linkInput = document.getElementById('loginLink');
+        let copiedStr = document.getElementsByClassName('copiedStr');
+        linkInput.select();
+        document.execCommand('copy');
+        if (copiedStr.length > 0) {
+          copiedStr[0].style.display = 'inline-block';
+        }
+        // alert('Link copied to clipboard!');
+    }
+
+    function closeModal() {
+        document.getElementById('loginLinkModal').style.display = 'none';
+    }
+</script>
+<style>
+  /* Blurred Background */
+  #loginLinkModal.modal {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: rgba(0, 0, 0, 0.6); /* Semi-transparent black */
+      backdrop-filter: blur(5px); /* Blur effect */
+      display: none; /* Hidden by default */
+      z-index: 1000; /* Ensure it is on top of other elements */
+      justify-content: center;
+      align-items: center;
+  }
+
+  /* Modal Content Box */
+  #loginLinkModal .modal-content {
+      background: #fff; /* White background */
+      padding: 20px;
+      border-radius: 10px;
+      width: 600px;
+      max-width: 90%; /* Responsive */
+      text-align: center;
+      box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.25);
+      top: 30%;
+      left: 40%;
+  }
+
+  #loginLinkModal .modal-content input {
+    width: 500px;
+    padding: 4px;
+    border-radius: 5px;
+    border-color: lightgray;
+  }
+  /* Buttons Styling */
+  #loginLinkModal button {
+      margin: 10px;
+      padding: 6px 20px;
+      color: #fff;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+  }
+
+  #loginLinkModal button:hover {
+      background-color: #0056b3;
+  }
+</style>
+<!-- Login as a customer via a tokenized link - the generated link modal, script and style Code end here 18 dec 2024 -->
+
  <style>
 .switch {
   position: relative;
