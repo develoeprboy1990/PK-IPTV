@@ -43,9 +43,15 @@ if(!isset($is_allow))
 
                               <?php if($is_allow->allow_create) {?> 
                                 <div class="box-header with-border">
+                                  <div class="col-md-6">
                                     <h3 class="box-title"><?php echo anchor('reseller/create', '<i class="fa fa-plus"></i> Add a Reseller', array('class' => 'btn btn-block btn-primary btn-flat')); ?></h3>
+                                  </div>
+                                  <div class="col-md-6 text-right">
+                                      <h3 class="box-title"><?php echo anchor('reseller/publishToCloud', '<i class="fa fa-cloud-upload"></i> Publish To Cloud', array('class' => 'btn btn-block btn-success btn-flat')); ?></h3>
+                                  </div>  
                                 </div>
                               <?php } ?>
+
 
                               <!-- /.box-header -->
                               <div class="box-body">
@@ -96,16 +102,28 @@ if(!isset($is_allow))
 										<?php if($is_allow->allow_edit || $is_allow->allow_delete) {?> 										
                                         <td>
                                        
-                         <ul class="custom-list">
-        <li><button title="Edit"><?php echo btn_edit(BASE_URL.'reseller/details/'.$receller['id']);?></button></li>
-       <!-- <li><?php echo btn_delete(BASE_URL.'reseller/resellerdelete/'.$receller['id'])?></li> -->
-        <li>	<a href="<?php echo BASE_URL; ?>reseller/resellersdetails/<?php echo $receller['id'];?>" style="margin-left:5px;" title="View Plan" > <button >Plans</button></a></li>
-        <li><form  target="_blank" novalidate="novalidate" id="kt_sign_in_form" action="<?php echo BASE_URL;?>resellers/login" method="post" class="login-form">
-                         <input type="hidden"  name="identity"  value="<?=$receller['email']?>"  >
-                         <input type="hidden"   name="password"   value="<?=base64_decode($receller['password'])?>"   >
-                         <button type="submit"  name="sign_in_submit"   title="Reseller Login"><i class="fa fa-sign-in" title="reseller login"></i></button>
-                         </form></li>
-    </ul>
+                        <ul class="custom-list">
+                          <li>
+                            <button title="Edit"><?php echo btn_edit(BASE_URL.'reseller/details/'.$receller['id']);?></button>
+                          </li>
+                          <!-- <li><?php echo btn_delete(BASE_URL.'reseller/resellerdelete/'.$receller['id'])?></li> -->
+                          <li>
+                            <a href="<?php echo BASE_URL; ?>reseller/resellersdetails/<?php echo $receller['id'];?>" style="margin-left:5px;" title="View Plan" > <button >Plans</button></a>
+                          </li>
+                          <li>
+                            <form  target="_blank" novalidate="novalidate" id="kt_sign_in_form" action="<?php echo BASE_URL;?>resellers/login" method="post" class="login-form">
+                              <input type="hidden"  name="identity"  value="<?=$receller['email']?>"  >
+                              <input type="hidden"   name="password"   value="<?=base64_decode($receller['password'])?>"   >
+                              <button type="submit"  name="sign_in_submit"   title="Reseller Login"><i class="fa fa-sign-in" title="reseller login"></i></button>
+                            </form>
+                          </li>
+                          <li>
+                            <a href="<?php echo BASE_URL; ?>reseller/notification_settings/<?php echo $receller['id'];?>" 
+                          class="btn btn-xs" title="Notification Settings">
+                              <i class="fa fa-bell"></i>
+                            </a>
+                          </li>
+                        </ul>
                       </td>
 										<?php $i++; } ?>
                                       </tr> 

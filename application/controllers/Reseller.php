@@ -1582,5 +1582,158 @@ class Reseller extends MY_Controller{
 		return $return_str;
 	}
 
-	
+	// Add this method to your Reseller controller
+	public function notification_settings($id) {
+	    $this->data['page_title'] = "Notification Settings";
+	    $this->data['breadcrumb'] = $this->breadcrumbs->show();
+	    
+	    // Get reseller details
+	    $reseller_info = $this->reseller_m->getReseller($id);
+	    
+	    if(isset($_POST['save_notification'])) {
+
+	        $data = array(
+	            'notification_subject' => $this->input->post('notification_subject'),
+	            'notification_body' => $this->input->post('notification_body'),
+	            'renewal_url' => $this->input->post('renewal_url')
+	        );
+	        
+	        // Handle QR code upload if provided
+			if(isset($_FILES['qr_code']) && $_FILES['qr_code']['size'] > 0) {
+			    // Upload the file using your existing method
+			    $uploaded_filename = $this->do_upload(LOCAL_PATH_IMAGES_CMS, 'qr_code');
+			    
+			    if($uploaded_filename) {
+			        // Construct the full path to the uploaded file
+			        $qr_image_path = rtrim(LOCAL_PATH_IMAGES_CMS, '/') . '/' . $uploaded_filename;
+			        
+			        if(file_exists($qr_image_path)) {
+			            // Convert image to base64
+			            $image_type = pathinfo($qr_image_path, PATHINFO_EXTENSION);
+			            $image_data = file_get_contents($qr_image_path);
+			            $base64_image = 'data:image/' . $image_type . ';base64,' . base64_encode($image_data);
+			            
+			            // Store the base64 string in the data array
+			            $data['qr_code'] = $base64_image;
+			        } else {
+			            $this->session->set_flashdata('error', 'Failed to process uploaded image');
+			        }
+			    } else {
+			        // Handle upload error if needed
+			        $error = $this->session->flashdata('qr_code_error');
+			        $this->session->set_flashdata('error', $error);
+			    }
+			}
+	        
+	        $where = array('id' => $id);
+	        if($this->reseller_m->update_key($data, $where)) {
+	            // Generate example JSON response for frontend
+	            $json_response = array(
+	                'title' => $data['notification_subject'],
+	                'alertType' => 'Expiration',
+	                'message' => $data['notification_body'],
+	                'qr-code' => $data['qr_code'] ?? '',
+	                'actions' => array(
+	                    array(
+	                        'buttonTitle' => 'Renew Now',
+	                        'actionUrl' => $data['renewal_url'],
+	                        'actionType' => 'Primary'
+	                    ),
+	                    array(
+	                        'buttonTitle' => 'Open Settings',
+	                        'actionUrl' => 'app-settings://open',
+	                        'actionType' => 'Secondary'
+	                    ),
+	                    array(
+	                        'buttonTitle' => 'Cancel',
+	                        'actionUrl' => null,
+	                        'actionType' => 'Neutral'
+	                    )
+	                )
+	            );
+	            
+	            $this->data['json_preview'] = json_encode($json_response, JSON_PRETTY_PRINT);
+	            $this->session->set_flashdata('success', 'Notification settings updated successfully');
+	            $this->session->set_flashdata('json_preview', $this->data['json_preview']);
+	            redirect(current_url());
+	        }
+	    }
+	    
+	    // Available variables for notification template
+	    $this->data['template_variables'] = array(
+	        '[FIRST_NAME]' => 'Customer\'s first name',
+	        '[SUBSCRIPTION_PLAN]' => 'Current subscription plan name',
+	        '[USERNAME]' => 'Customer\'s username/email',
+	        '[EXPIRING_DAY]' => 'Days remaining until expiration',
+	        '[SUBSCRIPTION_END_DATE]' => 'Subscription end date',
+	        '[Operatorlink]' => 'Operator website link',
+	        '[Operatoraddress]' => 'Operator address',
+	        '[Termsofservicelink]' => 'Terms of service link'
+	    );
+	    
+	    $this->data['reseller'] = $reseller_info[0];
+	    $this->data['main_nav'] = 'resellerweb';
+	    $this->data['sub_nav'] = 'reseller';
+	    
+	    $this->data['_extra_scripts'] = DEFAULT_THEME . 'reseller/_extra_scripts';
+	    $this->data['_view'] = DEFAULT_THEME . 'reseller/notification_settings';
+	    $this->load->view(DEFAULT_THEME . '_layout', $this->data);
+	}
+
+	public function publishToCloud() {
+	    $resellers = $this->reseller_m->getData();
+	    $json_data = array();
+	    
+	    foreach($resellers as $reseller) {
+	        // Get reseller details
+	        $reseller_plandetails = $this->reseller_m->getResellerPlans($reseller['id'], 'reseller_panel_subscription');
+	        
+	        // Build response object for each reseller
+	        $reseller_response = array(
+	            'title' => $reseller['notification_subject'] ?? 'Subscription Expiration Warning',
+	            'alertType' => 'Expiration',
+	            'message' => $reseller['notification_body'] ?? 'Your subscription is about to expire. Please renew to continue enjoying uninterrupted service.',
+	            'qr-code' => $reseller['qr_code'] ?? '',
+	            'actions' => array(
+	                array(
+	                    'buttonTitle' => 'Renew Now',
+	                    'actionUrl' => $reseller['renewal_url'] ?? '',
+	                    'actionType' => 'Primary'
+	                ),
+	                array(
+	                    'buttonTitle' => 'Open Settings',
+	                    'actionUrl' => 'app-settings://open',
+	                    'actionType' => 'Secondary'
+	                ),
+	                array(
+	                    'buttonTitle' => 'Cancel',
+	                    'actionUrl' => null,
+	                    'actionType' => 'Neutral'
+	                )
+	            )
+	        );
+	        
+	        $json_data[$reseller['id']] = $reseller_response;
+	    }
+	    
+	    // Create JSON file
+	    $filename = 'resellers_notifications.json';
+	    $localFilePath = LOCAL_PATH_CMS . $filename;
+	    
+	    $final_json_output = json_encode($json_data, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
+	    
+	    // Write file locally
+	    $fp = fopen($localFilePath, 'w');
+	    fwrite($fp, $final_json_output);
+	    fclose($fp);
+	    
+	    // Upload to CDN
+	    //$this->uploadToCdnServer($filename, $localFilePath, 'jsons', 'cms');
+	    
+	    // Set success message
+	    $this->session->set_flashdata('success', 'Resellers notification settings published to cloud successfully.');
+	    
+	    // Redirect back to index
+	    redirect(BASE_URL.'reseller');
+	}	
 }

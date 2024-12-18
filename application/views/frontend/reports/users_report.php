@@ -80,10 +80,8 @@
                                 <?php foreach ($users as $user):?>
                                 <tr>
                                     <th>
-                                        <!-- <a href="<?php echo $user->details_url; ?>"><?php //echo htmlspecialchars($user->first_name.' '.$user->last_name, ENT_QUOTES, 'UTF-8'); ?>
-                                        </a> -->
-
-                                        <?php echo htmlspecialchars($user->first_name.' '.$user->last_name, ENT_QUOTES, 'UTF-8'); ?>
+                                        <a href="<?php echo $user->details_url; ?>"><?php echo htmlspecialchars($user->first_name.' '.$user->last_name, ENT_QUOTES, 'UTF-8'); ?>
+                                        </a>
                                     </th>
                                     <td><?php echo $user->total_movies; ?></td>
                                     <td data-sparkline="<?php echo $user->movies_quarterly; ?> "/>
@@ -112,9 +110,7 @@
                         <figure class="highcharts-figure">
                             <div id="bar_container"></div>
                             <p class="highcharts-description">
-                                Bar chart showing horizontal columns. This chart type is often
-                                beneficial for smaller screens, as the user can scroll through the data
-                                vertically, and axis labels are easy to read.
+                                
                             </p>
                         </figure>
                     </div>
@@ -130,13 +126,8 @@
                     <div class="box-body">
                         <figure class="highcharts-figure">
                             <div id="column_container"></div>
-                           <!--  <p class="highcharts-description">
-                                A basic column chart comparing estimated corn and wheat production
-                                in some countries.
-
-                                The chart is making use of the axis crosshair feature, to highlight
-                                the hovered country.
-                            </p> -->
+                             <p class="highcharts-description">
+                            </p> 
                         </figure>
                     </div>
                   <!-- /.box-body -->
@@ -147,8 +138,8 @@
     </section>
 </div>
 <script src="https://code.highcharts.com/highcharts.js"></script>
-<script src="https://code.highcharts.com/modules/exporting.js"></script>
-<script src="https://code.highcharts.com/modules/export-data.js"></script>
+<!-- <script src="https://code.highcharts.com/modules/exporting.js"></script>
+<script src="https://code.highcharts.com/modules/export-data.js"></script> -->
 <script src="https://code.highcharts.com/modules/accessibility.js"></script>
 <script type="text/javascript">
     /**

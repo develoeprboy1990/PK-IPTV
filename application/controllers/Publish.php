@@ -461,7 +461,7 @@ class Publish extends User_Controller
 				$genres = array();
 
 			
-
+				//RECENT_MOVIE_GENRE_NAME
 				$sql_movie_recent = "SELECT movie.id, movie.language, movie.poster, movie.backdrop, movie.name, movie.year, l.name as language_name 
                      FROM movie 
                      LEFT JOIN languages l ON l.id = movie.language
@@ -483,7 +483,7 @@ class Publish extends User_Controller
 							'backdrop' => $movie_recent->backdrop,
 							'name' => stripslashes($movie_recent->name),
 							'position' => $position_recent++,
-							'year' => date('Y', strtotime($movie_recent->year))
+							'year' => date('Ymd', strtotime($movie_recent->year))
 						)
 					);
 				}
@@ -527,7 +527,7 @@ class Publish extends User_Controller
 							'backdrop' => $movie_new_release->backdrop,
 							'name' => $movie_new_release->name,
 							'position' => $position_new_release++,
-							'year' => date('Y', strtotime($movie_new_release->year))
+							'year' => date('Ymd', strtotime($movie_new_release->year))
 						)
 					);
 				}
@@ -573,7 +573,7 @@ class Publish extends User_Controller
 								'name' => stripslashes($movie->name),
 								'position' => $position++,
 								//'tags' => $tags,
-								'year' => date('Y', strtotime($movie->year))
+								'year' => date('Ymd', strtotime($movie->year))
 							)
 						);
 					}
@@ -582,6 +582,7 @@ class Publish extends User_Controller
 						$genres,
 						array(
 							'id' => (int)$genre->id + 2,
+							'order_no' => $genre->order_no,
 							'name' => $genre->name,
 							'vod_id' => (int)$store->id,
 							'language_id' => (int)$store->language_id,
