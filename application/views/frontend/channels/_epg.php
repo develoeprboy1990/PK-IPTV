@@ -1,7 +1,7 @@
 <div class="box">
   <!-- /.box-header -->
   <div class="box-body">
-    <div id="ajax_search_responce">
+    <div id="ajax_search_responce" class="table-responsive">
       <?php if($responce = $this->session->flashdata('success')){ ?>
           <div class="alert alert-warning" role="alert" style="text-align:center"><?php echo $responce;?></div>
       <?php } ?>

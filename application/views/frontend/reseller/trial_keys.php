@@ -121,7 +121,7 @@ if(!isset($is_allow))
   <div class="box box-primary">
     <div class="box-header"><h4>Reseller Trial Plans</h4></div>
     <div class="box-body">
-        <div id="ajax_search_responce">
+        <div id="ajax_search_responce" class="table-responsive">
             <table id="apps" class="table table-bordered table-striped">
                 <thead>
                     <tr>

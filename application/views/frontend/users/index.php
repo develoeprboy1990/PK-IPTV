@@ -19,7 +19,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 									<h3 class="box-title"><?php echo anchor('users/create', '<i class="fa fa-plus"></i> '. lang('users_create_user'), array('class' => 'btn btn-block btn-primary btn-flat')); ?></h3>
 								</div>
                                                              <?php } ?>
-								<div class="box-body">
+								<div class="box-body table-responsive">
 									<table class="table table-bordered table-striped table-hover">
 										<thead>
 											<tr>

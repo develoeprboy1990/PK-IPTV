@@ -63,7 +63,7 @@
                     <div class="alert alert-warning" role="alert" style="text-align:center"><?php echo $responce;?></div>
                     <?php } ?>
                     <div id="result"></div>
-                    <div id="scrolling-container">
+                    <div id="scrolling-container" class="table-responsive">
                         <table id="table-sparkline" class="table table-bordered table-striped">
                             <thead>
                                 <tr>

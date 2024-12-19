@@ -23,7 +23,7 @@ if(!isset($is_allow))
 					?>
                         <div class="col-md-12">
                             
-                            <div class="box">
+                            <div class="box" class="table-responsive">
                               
                               <div class="box box-primary">
 								<div class="box-header"> <h4><strong>EPG Cron</strong></h4> </div>

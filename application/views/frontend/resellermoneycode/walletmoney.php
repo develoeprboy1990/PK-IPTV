@@ -102,7 +102,7 @@ if(!isset($is_allow))
 											  </span> -->
 											</div>
 											<div class="box-body">
-											  <div>
+											  <div class="table-responsive">
 												<table id="resellermoneycode" class="table table-bordered table-striped">
 												  <thead>
 													<tr>

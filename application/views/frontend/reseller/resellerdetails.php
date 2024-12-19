@@ -38,7 +38,7 @@ if(!isset($is_allow)){
 				<div class="row"> 
 						<div class="row">
 						  <div class="col-sm-12">
-							  <div id="ajax_search_responce">
+							  <div id="ajax_search_responce" class="table-responsive">
 								<table id="apps_fff" class="table table-bordered table-striped">
 								  <thead>
 									<tr>

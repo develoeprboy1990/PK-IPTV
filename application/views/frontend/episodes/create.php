@@ -11,7 +11,7 @@
 		if($tmbd_idbm != ''){
 		?>	 
 		<div class="box box-primary">
-	    <div class="box-body">
+	    <div class="box-body" class="table-responsive">
 			  <h3 class="box-title pull-right">
 					<a href="<?php echo BASE_URL.'series_seasons/episodes/'.$season_id; ?>" class="btn btn-block btn-primary btn-flat">
 						<i class="fa fa-arrow-left"></i> 

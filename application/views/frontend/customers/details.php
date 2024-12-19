@@ -390,7 +390,7 @@
                   <div class="box box-primary">
                     <div class="box-header"><h3>Login</h3></div>
                     <div class="box-body">
-                      <div>
+                      <div class="table-responsive">
                         <table class="table table-bordered table-striped">
                           <thead>
                             <tr>
@@ -433,7 +433,7 @@
                         </div>
                       </div>
 
-                      <div>
+                      <div class="table-responsive">
 
                         <table class="table table-bordered table-striped">
                           <thead>
@@ -467,7 +467,7 @@
                 </div>
                 <div class="box box-primary">
                   <div class="box-body">
-                    <div id="ajax_search_responce">
+                    <div id="ajax_search_responce" class="table-responsive">
                       <table id="devices" class="table table-bordered table-striped">
                           <thead>
                               <tr>
@@ -732,7 +732,7 @@
                     <?php } ?>
                     <!-- /.box-header -->
                     <div class="box-body">
-                      <div id="ajax_search_responce">
+                      <div id="ajax_search_responce" class="table-responsive">
                         <table id="messages" class="table table-bordered table-striped " style="width: 100%;">
                         <thead>
                           <tr>
@@ -763,7 +763,7 @@
                   <div class="box box-primary">
                     <!-- /.box-header -->
                     <div class="box-body">
-                      <div id="ajax_search_responce">
+                      <div id="ajax_search_responce" class="table-responsive">
                         <table id="logs" class="table table-bordered table-striped">
                         <thead>
                           <tr>
@@ -796,7 +796,7 @@
                   <div class="box box-primary">
                     <!-- /.box-header -->
                     <div class="box-body">
-                      <div id="ajax_search_responce">
+                      <div id="ajax_search_responce" class="table-responsive">
                         <table id="debug_logs" class="table table-bordered table-striped">
                         <thead>
                           <tr>

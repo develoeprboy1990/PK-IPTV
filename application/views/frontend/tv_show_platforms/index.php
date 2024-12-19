@@ -20,7 +20,7 @@
       
     <div class="box">
       <div class="box-body">
-        <div id="ajax_search_responce">
+        <div id="ajax_search_responce" class="table-responsive">
           <table id="tv_show_platforms" class="table table-bordered table-striped">
             <thead>
               <tr>

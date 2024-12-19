@@ -29,7 +29,7 @@ if(!isset($is_allow))
                                 <div class="tab-pane active" id="tab_1">
                                     <div class="box">
                                       <div class="box-body">
-                                        <div id="ajax_search_responce">
+                                        <div id="ajax_search_responce" class="table-responsive">
                                           <?php if($responce = $this->session->flashdata('success')){ ?>
                                               <div class="alert alert-warning" role="alert" style="text-align:center"><?php echo $responce;?></div>
                                           <?php } ?>
@@ -61,7 +61,7 @@ if(!isset($is_allow))
                                  <div class="tab-pane" id="tab_2">
                                     <div class="box">
                                       <div class="box-body">
-                                        <div id="ajax_search_responce">
+                                        <div id="ajax_search_responce" class="table-responsive">
                                           <table id="tokens" class="table table-bordered table-striped">
                                           <thead>
                                             <tr>
@@ -92,7 +92,7 @@ if(!isset($is_allow))
                                  <div class="tab-pane" id="tab_3">
                                     <div class="box">
                                       <div class="box-body">
-                                        <div id="ajax_search_responce">
+                                        <div id="ajax_search_responce" class="table-responsive">
                                           <?php if($responce = $this->session->flashdata('success')){ ?>
                                               <div class="alert alert-warning" role="alert" style="text-align:center"><?php echo $responce;?></div>
                                           <?php } ?>
@@ -124,7 +124,7 @@ if(!isset($is_allow))
                                 <div class="tab-pane" id="tab_4">
                                     <div class="box">
                                       <div class="box-body">
-                                        <div id="ajax_search_responce">
+                                        <div id="ajax_search_responce" class="table-responsive">
                                           <?php if($responce = $this->session->flashdata('success')){ ?>
                                               <div class="alert alert-warning" role="alert" style="text-align:center"><?php echo $responce;?></div>
                                           <?php } ?>

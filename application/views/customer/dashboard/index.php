@@ -269,7 +269,7 @@
                 </form>
               </div>
 
-              <div class="tab-pane" id="tab_4">
+              <div class="tab-pane table-responsive" id="tab_4">
                  <table id="messages" class="table table-bordered table-striped table-hover" style="width: 100%;">
                     <thead>
                       <tr>

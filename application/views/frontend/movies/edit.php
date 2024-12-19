@@ -1022,7 +1022,7 @@
                 <h3 class="box-title">Movie Activity Log</h3>
               </div>
               <div class="box-body">
-                <div class="table-responsive">
+                <div class="table-responsive" class="table-responsive">
                   <table class="table table-bordered table-striped">
                     <thead>
                       <tr>

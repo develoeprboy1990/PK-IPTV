@@ -96,7 +96,7 @@
                             <div class="row">
                                 <div class="col-md-12">
                                     <div class="box">
-                                        <div class="box-body">
+                                        <div class="box-body" class="table-responsive">
                                             <?php if (!empty($migration_history)): ?>
                                                 <table id="migration-history" class="table table-bordered table-striped">
                                                     <thead>

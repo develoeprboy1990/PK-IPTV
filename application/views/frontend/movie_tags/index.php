@@ -26,7 +26,7 @@
           <div class="box">
             <!-- /.box-header -->
             <div class="box-body">
-              <div id="ajax_search_responce">
+              <div id="ajax_search_responce" class="table-responsive">
                 <table id="tags" class="table table-bordered table-striped">
                 <thead>
                   <tr >

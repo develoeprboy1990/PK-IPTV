@@ -28,7 +28,7 @@
             
             <!-- /.box-header -->
             <div class="box-body">
-              <div id="ajax_search_responce">
+              <div id="ajax_search_responce" class="table-responsive">
                 <table class="table table-bordered table-striped">
                 <thead>
                   <tr>
@@ -113,7 +113,7 @@
             </div>
             <!-- /.box-header -->
             <div class="box-body">
-              <div>
+              <div class="table-responsive">
                 <table class="table table-bordered table-striped">
                 <thead>
                   <tr>

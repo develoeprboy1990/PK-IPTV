@@ -28,7 +28,7 @@
                   <?php } ?>
                   <!-- /.box-header -->
                   <div class="box-body">
-                    <div id="ajax_search_responce">
+                    <div id="ajax_search_responce" class="table-responsive">
                       <table id="messages" class="table table-bordered table-striped " style="width: 100%;">
                       <thead>
                         <tr>
