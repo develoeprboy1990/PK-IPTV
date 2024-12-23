@@ -1,8 +1,7 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
 
-class Migration_Create_customer_login_tokens_tables extends CI_Migration {
-
+class Migration_Create_customer_login_tokens extends CI_Migration {
     public function up() {
         // Create customer_login_tokens table
         $this->dbforge->add_field([
@@ -26,12 +25,12 @@ class Migration_Create_customer_login_tokens_tables extends CI_Migration {
                 'constraint' => 11,
                 'null' => FALSE
             ],
-            'created_at' => [
-                'type' => 'TIMESTAMP',
-                'default' => 'CURRENT_TIMESTAMP'
-            ]
+            'created_at timestamp DEFAULT CURRENT_TIMESTAMP',
+            'updated_at timestamp DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP'
         ]);
+
         $this->dbforge->add_key('id', TRUE); // Primary key
+
         $this->dbforge->create_table('customer_login_tokens', TRUE, ['ENGINE' => 'InnoDB']);
     }
 
